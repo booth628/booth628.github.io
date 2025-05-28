@@ -1,0 +1,33 @@
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    background-color: #414141;
+    color: aliceblue;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    zoom: 140%;
+}
+
+.hud,
+.letters {
+    display: flex;
+    justify-content: space-between;
+}
+
+.history {
+    display: flex;
+    justify-content: center;
+    ol{
+        height: 200px;
+        width: 50%; 
+        overflow: hidden;
+        overflow-y: scroll;
+    }
+}
+#score,
+#l1,
+#l2,
+.history {
+    display: none;
+}
