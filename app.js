@@ -15,13 +15,14 @@ let allottment = 30;
 const selectionKeys = [["ArrowLeft", "1"], ["ArrowRight", "2"]];
 const alphabet = "abcdefghijklmnopqrstuvqxyz";
 let names = [];
+let adjacentLetters = new Map();
 
 let pool = [];
 let begun = false;
 let runningScore, attempts, runningTime;
 let currentInterval;
 let currentPair;
-let lastMode = 0;
+let lastMode = 3;
 
 class Pair
 {
@@ -39,6 +40,10 @@ class Pair
         if (lastMode == 2)
         {
             return new Pair(one, randomSelection(one, (s) => { return s[0] == one[0]; }));
+        }
+        else if (lastMode == 3)
+        {
+            return new Pair(one, randomSelection(one, (s) => { return adjacentLetters[one[0]].includes(s[0]); }));
         }
         else
             return new Pair(one, randomSelection(one));
@@ -60,13 +65,13 @@ function randomSelection (exception = "", predicate = null)
 
 function handleKeyPress (event) 
 {
-    if (event.key == "Enter")
+    if (event.key == "W")
         handleStartPress(0);
     if (event.key == "L")
         handleStartPress(1);
     if (event.key == "S")
         handleStartPress(2);
-    if (event.key == " ")
+    if (event.key == " " || event.key == "Enter")
         handleStartPress(lastMode);
     if (begun)
     {
@@ -103,6 +108,21 @@ function scrambleCurrentPair ()
     currentPair = Pair.pick();
     l1.textContent = currentPair.l1;
     l2.textContent = currentPair.l2;
+}
+
+function loadAdj (window = 2)
+{
+    for (int i = 0; i < 25; i++)
+    {
+        letters = [];
+        for (int j = i - window; j < i + window; j++)
+        {
+            if ((j < 0) || (j > 25))
+                continue;
+            letters.push(alphabet[j]);
+        }
+        adjacentLetters.set(alphabet[i], letters);
+    }
 }
 
 function handleStartPress (mode = 0)
@@ -165,10 +185,12 @@ async function main()
     let temp = "";
     await fetch("./last-names.txt").then(response => response.text()).then(str => temp = str);;
     names = temp.split("\n");
+    loadAdj();
     document.addEventListener("keypress", handleKeyPress);
     start.addEventListener("click", () => {handleStartPress(lastMode)});
     left.addEventListener("click", () => {choose(0)});
     right.addEventListener("click", () => {choose(1)});
+    
     let allowedKeys = ["Backspace", "Delete", "Tab", "Escape", "Enter", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"];
     timeIn.addEventListener("keypress", function (e) {
         if (!allowedKeys.includes(e.key) && !/^[0-9]$/.test(e.key))
