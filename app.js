@@ -101,7 +101,7 @@ function handleStartPress (mode = 0)
     attempts = 0;
     runningScore = 0;
     allottment = parseInt(timeIn.value);
-    if (allottment == NaN || allottment == 0)
+    if (timeIn.value == "" || allottment == 0)
         allottment = 30;
     runningTime = allottment + 1;
     if (mode == 0)
