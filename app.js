@@ -16,7 +16,7 @@ const selectionKeys = [["ArrowLeft", "1"], ["ArrowRight", "2"]];
 const alphabet = "abcdefghijklmnopqrstuvqxyz";
 let names = [];
 
-let pool;
+let pool = [];
 let begun = false;
 let runningScore, attempts, runningTime;
 let currentInterval;
@@ -36,26 +36,38 @@ class Pair
     static pick ()
     {
         let one = randomSelection();
-        return new Pair(one, randomSelection(one))
+        if (lastMode == 2)
+        {
+            return new Pair(one, randomSelection(one, (s) => { return s[0] == one[0]; }));
+        }
+        else
+            return new Pair(one, randomSelection(one));
     }
 }
 
-function randomSelection (exception = "")
+function randomSelection (exception = "", predicate = null)
 {
-    let choice = pool[Math.ceil(Math.random() * (pool.length - 1))];
+    let tempPool = pool;
+    if (predicate != null)
+        tempPool = pool.filter(predicate);
+    let choice = tempPool[Math.ceil(Math.random() * (tempPool.length - 1))];
     while (choice == exception)
     {
-        choice = pool[Math.ceil(Math.random() * (pool.length - 1))];
+        choice = tempPool[Math.ceil(Math.random() * (tempPool.length - 1))];
     }
     return choice;
 }
 
 function handleKeyPress (event) 
 {
-    if (event.key == " " || event.key == "Enter")
+    if (event.key == "Enter")
         handleStartPress(0);
     if (event.key == "L")
         handleStartPress(1);
+    if (event.key == "S")
+        handleStartPress(2);
+    if (event.key == " ")
+        handleStartPress(lastMode);
     if (begun)
     {
         for (i = 0; i < 2; i++)
@@ -98,24 +110,23 @@ function handleStartPress (mode = 0)
     history.innerHTML = "";
     attempts = 0;
     runningScore = 0;
+
     allottment = parseInt(timeIn.value);
     if (timeIn.value == "" || allottment == 0)
         allottment = 30;
     runningTime = allottment + 1;
-    
-    if (mode == 0)
-        pool = names;
-    else if (mode == 1)
-        pool = alphabet;
-    lastMode = mode;
-
     tick();
     clearInterval(currentInterval);
+    pool = names;
+    if (mode == 1)
+        pool = alphabet;
+    lastMode = mode;
 
     instructions.textContent = "Press spacebar to restart";
     timeIn.style.display = "none";
     start.textContent = "Restart";
     timeSet.textContent = allottment + "-second round";
+    score.textContent = "0/0";
 
     document.getElementById("historyContainer").style.display = "flex";
     score.style.display = "flex";
@@ -137,7 +148,8 @@ function tick ()
         begun = false;
         clearInterval(currentInterval);
         timeIn.style.display = "flex";
-        document.getElementById("letterContainer").style.display = "none";
+        l1.style.display = "none";
+        l2.style.display = "none";
         playInstructions.style.display = "none";
         left.style.display = "none";
         right.style.display = "none";
