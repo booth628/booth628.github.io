@@ -9,10 +9,33 @@ body {
     zoom: 140%;
 }
 
-.hud,
-.letters {
+.hud {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-evenly;
+}
+
+#timeIn,
+#start,
+#leftChoice,
+#rightChoice {
+    justify-content: center;
+    display:block;
+    margin-bottom: 1em;
+    text-align: center;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-weight: bolder;
+    font-size: x-large; 
+    height: fit-content;
+}
+
+#timeSet {
+    margin: 0 auto;
+}
+
+.letters,
+#instruction {
+    display: flex;
+    justify-content: space-evenly;
 }
 
 .history {
@@ -28,6 +51,10 @@ body {
 #score,
 #l1,
 #l2,
-.history {
+#leftChoice,
+#rightChoice,
+#instruction2,
+.history,
+#timeSet {
     display: none;
 }

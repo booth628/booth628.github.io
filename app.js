@@ -1,17 +1,27 @@
 const instructions = document.getElementById("instruction");
+const playInstructions = document.getElementById("instruction2");
 const score = document.getElementById("score");
 const history = document.getElementById("history");
 const l1 = document.getElementById("l1");
 const l2 = document.getElementById("l2");
 const clock = document.getElementById("time");
+const start = document.getElementById("start");
+const left = document.getElementById("leftChoice");
+const right = document.getElementById("rightChoice");
+const timeIn = document.getElementById("timeIn");
+const timeSet = document.getElementById("timeSet");
 
-const allottment = 30;
+let allottment = 30;
 const selectionKeys = [["ArrowLeft", "1"], ["ArrowRight", "2"]];
 const alphabet = "abcdefghijklmnopqrstuvqxyz";
+let names = [];
 
+let pool;
 let begun = false;
 let runningScore, attempts, runningTime;
 let currentInterval;
+
+
 
 class Pair
 {
@@ -23,45 +33,30 @@ class Pair
         this.choice = 0;
         this.lesser = (l1 < l2) ? 0 : 1;
     }
-    static gen () 
+    static pick ()
     {
-        let one = randomLetter();
-        return new Pair(one, randomLetter(one));
+        let one = randomSelection();
+        return new Pair(one, randomSelection(one))
     }
 }
 
-let currentPair = Pair.gen();
-
-function randomLetter (exception = "")
+function randomSelection (exception = "1")
 {
-    let choice = alphabet[Math.ceil(Math.random() * 25)];
+    let choice = pool[Math.ceil(Math.random() * (pool.length - 1))];
     while (choice == exception)
     {
-        choice = alphabet[Math.ceil(Math.random() * 25)];
+        choice = pool[Math.ceil(Math.random() * (pool.length - 1))];
     }
     return choice;
 }
 
-document.addEventListener("keydown", handleKeyPress);
+let currentPair;
 
 function handleKeyPress (event) 
 {
-    if (event.key === " ")
+    if (event.key == " " || event.key == "Enter")
     {
-        history.innerHTML = "";
-        attempts = 0;
-        runningScore = 0;
-        runningTime = allottment + 1;
-        tick();
-        clearInterval(currentInterval);
-        instructions.textContent = "Press spacebar to restart";
-        score.style.display = "flex";
-        document.getElementById("historyContainer").style.display = "flex";
-        l1.style.display = "flex";
-        l2.style.display = "flex";
-        scrambleCurrentPair();
-        begun = true;
-        currentInterval = setInterval(tick, 1000);
+        handleStartPress();
     }
     if (begun)
     {
@@ -70,18 +65,18 @@ function handleKeyPress (event)
             {
                 choose(i, currentPair);
         }
-        score.textContent = runningScore + "/" + attempts;
     }
 }
 
-function choose (code, pair)
+function choose (code)
 {
     attempts++;
-    pair.result = code == pair.lesser;
-    if (pair.result)
+    currentPair.result = code == currentPair.lesser;
+    if (currentPair.result)
         runningScore++;
-    pair.choice = code;
-    updateHistory(pair);
+    currentPair.choice = code;
+    score.textContent = runningScore + "/" + attempts;
+    updateHistory(currentPair);
     scrambleCurrentPair();
 }
 
@@ -95,9 +90,38 @@ function updateHistory (pair)
 
 function scrambleCurrentPair ()
 {
-    currentPair = Pair.gen();
+    currentPair = Pair.pick();
     l1.textContent = currentPair.l1;
     l2.textContent = currentPair.l2;
+}
+
+function handleStartPress ()
+{
+    history.innerHTML = "";
+    attempts = 0;
+    runningScore = 0;
+    allottment = parseInt(timeIn.value);
+    if (allottment == NaN || allottment == 0)
+        allottment = 30;
+    runningTime = allottment + 1;
+    pool = names;
+    tick();
+    clearInterval(currentInterval);
+    instructions.textContent = "Press spacebar to restart";
+    score.style.display = "flex";
+    document.getElementById("historyContainer").style.display = "flex";
+    timeIn.style.display = "none";
+    timeSet.style.display = "flex";
+    timeSet.textContent = allottment + " second round";
+    start.textContent = "Restart";
+    playInstructions.style.display = "flex";
+    l1.style.display = "flex";
+    l2.style.display = "flex";
+    left.style.display = "flex";
+    right.style.display = "flex";
+    scrambleCurrentPair();
+    begun = true;
+    currentInterval = setInterval(tick, 1000);
 }
 
 function tick ()
@@ -106,7 +130,35 @@ function tick ()
     {
         begun = false;
         clearInterval(currentInterval);
+        playInstructions.style.display = "none";
+        document.getElementById("letterContainer").style.display = "none";
+        timeIn.style.display = "flex";
+        left.style.display = "none";
+        right.style.display = "none";
+        return;
     }
     runningTime --;
-    clock.textContent = Math.floor(runningTime / 60) + ":" + runningTime % 60;
+    let seconds = runningTime % 60;
+    clock.textContent = Math.floor(runningTime / 60) + ":" + ((seconds / 10 < 1) ? "0" : "") + seconds;
 }
+
+async function main()
+{
+    let temp = "";
+    await fetch("last-names.txt").then(response => response.text()).then(str => temp = str);;
+    names = temp.split("\n");
+    document.addEventListener("keydown", handleKeyPress);
+    start.addEventListener("click", handleStartPress);
+    left.addEventListener("click", () => {choose(0)});
+    right.addEventListener("click", () => {choose(1)});
+    let allowedKeys = ["Backspace", "Delete", "Tab", "Escape", "Enter", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"];
+    timeIn.addEventListener("keydown", function (e) {
+        if (!allowedKeys.includes(e.key) && !/^[0-9]$/.test(e.key))
+        {
+            // Block if the key is not a number or whitelisted
+            e.preventDefault();
+        }
+    });
+}
+
+main();
