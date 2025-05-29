@@ -112,10 +112,10 @@ function scrambleCurrentPair ()
 
 function loadAdj (window = 2)
 {
-    for (int i = 0; i < 25; i++)
+    for (i = 0; i < 25; i++)
     {
         letters = [];
-        for (int j = i - window; j < i + window; j++)
+        for (j = i - window; j < i + window; j++)
         {
             if ((j < 0) || (j > 25))
                 continue;
