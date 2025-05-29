@@ -20,8 +20,8 @@ let pool;
 let begun = false;
 let runningScore, attempts, runningTime;
 let currentInterval;
-
-
+let currentPair;
+let lastMode = 0;
 
 class Pair
 {
@@ -40,7 +40,7 @@ class Pair
     }
 }
 
-function randomSelection (exception = "1")
+function randomSelection (exception = "")
 {
     let choice = pool[Math.ceil(Math.random() * (pool.length - 1))];
     while (choice == exception)
@@ -50,12 +50,10 @@ function randomSelection (exception = "1")
     return choice;
 }
 
-let currentPair;
-
 function handleKeyPress (event) 
 {
     if (event.key == " " || event.key == "Enter")
-        handleStartPress();
+        handleStartPress(0);
     if (event.key == "L")
         handleStartPress(1);
     if (begun)
@@ -108,6 +106,7 @@ function handleStartPress (mode = 0)
         pool = names;
     else if (mode == 1)
         pool = alphabet;
+    lastMode = mode;
     tick();
     clearInterval(currentInterval);
     instructions.textContent = "Press spacebar to restart";
@@ -148,10 +147,10 @@ function tick ()
 async function main()
 {
     let temp = "";
-    await fetch("last-names.txt").then(response => response.text()).then(str => temp = str);;
+    await fetch("./last-names.txt").then(response => response.text()).then(str => temp = str);;
     names = temp.split("\n");
     document.addEventListener("keydown", handleKeyPress);
-    start.addEventListener("click", handleStartPress);
+    start.addEventListener("click", () => {handleStartPress(lastMode)});
     left.addEventListener("click", () => {choose(0)});
     right.addEventListener("click", () => {choose(1)});
     let allowedKeys = ["Backspace", "Delete", "Tab", "Escape", "Enter", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"];
