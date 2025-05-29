@@ -15,7 +15,7 @@ let allottment = 30;
 const selectionKeys = [["ArrowLeft", "1"], ["ArrowRight", "2"]];
 const alphabet = "abcdefghijklmnopqrstuvqxyz";
 let names = [];
-let adjacentLetters = new Map();
+let adjacentLetters;
 
 let pool = [];
 let begun = false;
@@ -112,6 +112,7 @@ function scrambleCurrentPair ()
 
 function loadAdj (window = 2)
 {
+    adjacentLetters = new Map();
     for (i = 0; i < 25; i++)
     {
         letters = [];
@@ -119,9 +120,11 @@ function loadAdj (window = 2)
         {
             if ((j < 0) || (j > 25))
                 continue;
+            console.log(alphabet[j]);
             letters.push(alphabet[j]);
         }
         adjacentLetters.set(alphabet[i], letters);
+        console.log(adjacentLetters[alphabet[i]]);
     }
 }
 
