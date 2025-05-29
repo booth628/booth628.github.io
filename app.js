@@ -124,8 +124,10 @@ function loadAdj (window = 2)
                 continue;
             letters.push(alphabet[j]);
         }
+        console.log(letters);
         adjacentLetters.set(alphabet[i], letters);
     }
+    console.log(adjacentLetters.size);
 }
 
 function handleStartPress (mode = 0)
