@@ -102,20 +102,24 @@ function handleStartPress (mode = 0)
     if (timeIn.value == "" || allottment == 0)
         allottment = 30;
     runningTime = allottment + 1;
+    
     if (mode == 0)
         pool = names;
     else if (mode == 1)
         pool = alphabet;
     lastMode = mode;
+
     tick();
     clearInterval(currentInterval);
+
     instructions.textContent = "Press spacebar to restart";
-    score.style.display = "flex";
-    document.getElementById("historyContainer").style.display = "flex";
     timeIn.style.display = "none";
-    timeSet.style.display = "flex";
-    timeSet.textContent = allottment + " second round";
     start.textContent = "Restart";
+    timeSet.textContent = allottment + "-second round";
+
+    document.getElementById("historyContainer").style.display = "flex";
+    score.style.display = "flex";
+    timeSet.style.display = "flex";
     playInstructions.style.display = "flex";
     l1.style.display = "flex";
     l2.style.display = "flex";
@@ -132,9 +136,9 @@ function tick ()
     {
         begun = false;
         clearInterval(currentInterval);
-        playInstructions.style.display = "none";
-        document.getElementById("letterContainer").style.display = "none";
         timeIn.style.display = "flex";
+        document.getElementById("letterContainer").style.display = "none";
+        playInstructions.style.display = "none";
         left.style.display = "none";
         right.style.display = "none";
         return;
@@ -149,12 +153,12 @@ async function main()
     let temp = "";
     await fetch("./last-names.txt").then(response => response.text()).then(str => temp = str);;
     names = temp.split("\n");
-    document.addEventListener("keydown", handleKeyPress);
+    document.addEventListener("keypress", handleKeyPress);
     start.addEventListener("click", () => {handleStartPress(lastMode)});
     left.addEventListener("click", () => {choose(0)});
     right.addEventListener("click", () => {choose(1)});
     let allowedKeys = ["Backspace", "Delete", "Tab", "Escape", "Enter", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"];
-    timeIn.addEventListener("keydown", function (e) {
+    timeIn.addEventListener("keypress", function (e) {
         if (!allowedKeys.includes(e.key) && !/^[0-9]$/.test(e.key))
         {
             // Block if the key is not a number or whitelisted
