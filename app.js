@@ -13,7 +13,7 @@ const timeSet = document.getElementById("timeSet");
 
 let allottment = 30;
 const selectionKeys = [["ArrowLeft", "1"], ["ArrowRight", "2"]];
-const alphabet = "abcdefghijklmnopqrstuvqxyz";
+const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 let names = [];
 let adjacentLetters;
 
@@ -43,8 +43,6 @@ class Pair
         }
         else if (lastMode == 3)
         {
-            console.log(one);
-            console.log(adjacentLetters.get(one[0]));
             return new Pair(one, randomSelection(one, (s) => { return adjacentLetters.get(one[0]).includes(s[0]); }));
         }
         else
@@ -124,10 +122,8 @@ function loadAdj (window = 2)
                 continue;
             letters.push(alphabet[j]);
         }
-        console.log(letters);
         adjacentLetters.set(alphabet[i], letters);
     }
-    console.log(adjacentLetters.size);
 }
 
 function handleStartPress (mode = 0)
