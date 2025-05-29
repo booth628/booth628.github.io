@@ -55,9 +55,9 @@ let currentPair;
 function handleKeyPress (event) 
 {
     if (event.key == " " || event.key == "Enter")
-    {
         handleStartPress();
-    }
+    if (event.key == "L")
+        handleStartPress(1);
     if (begun)
     {
         for (i = 0; i < 2; i++)
@@ -95,7 +95,7 @@ function scrambleCurrentPair ()
     l2.textContent = currentPair.l2;
 }
 
-function handleStartPress ()
+function handleStartPress (mode = 0)
 {
     history.innerHTML = "";
     attempts = 0;
@@ -104,7 +104,10 @@ function handleStartPress ()
     if (allottment == NaN || allottment == 0)
         allottment = 30;
     runningTime = allottment + 1;
-    pool = names;
+    if (mode == 0)
+        pool = names;
+    else if (mode == 1)
+        pool = alphabet;
     tick();
     clearInterval(currentInterval);
     instructions.textContent = "Press spacebar to restart";
