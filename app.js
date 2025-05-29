@@ -43,6 +43,8 @@ class Pair
         }
         else if (lastMode == 3)
         {
+            console.log(one);
+            console.log(adjacentLetters.get(one[0]));
             return new Pair(one, randomSelection(one, (s) => { return adjacentLetters.get(one[0]).includes(s[0]); }));
         }
         else
@@ -120,7 +122,6 @@ function loadAdj (window = 2)
         {
             if ((j < 0) || (j > 25))
                 continue;
-            console.log(alphabet[j]);
             letters.push(alphabet[j]);
         }
         adjacentLetters.set(alphabet[i], letters);
