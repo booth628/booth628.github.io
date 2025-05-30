@@ -39,7 +39,7 @@ class Pair
         let one = randomSelection();
         if (lastMode == 2)
         {
-            return new Pair(one, randomSelection(one, (s) => { return s[0] == one[0]; }));
+            return new Pair(one, randomSelection(one, (s) => { return s[0] == one[0] && adjacentLetters.get(one[1]).includes(s[1]); }));
         }
         else if (lastMode == 3)
         {
