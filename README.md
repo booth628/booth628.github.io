@@ -20,8 +20,6 @@ To make a selection during a round, you may do one of the following:
 
 Click a name or letter
 
-Click the "Left" or "Right" buttons
-
 Press 1 or 2
 
 Press the left or right arrow keys

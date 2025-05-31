@@ -34,16 +34,21 @@ class Pair
         this.choice = 0;
         this.lesser = (l1 < l2) ? 0 : 1;
     }
-    static pick ()
+    static pick (mode)
     {
         let one = randomSelection();
-        if (lastMode == 2)
+        if (mode == 2)
         {
             return new Pair(one, randomSelection(one, (s) => { return s[0] == one[0] && adjacentLetters.get(one[1]).includes(s[1]); }));
         }
-        else if (lastMode == 3)
+        else if (mode == 3)
         {
             return new Pair(one, randomSelection(one, (s) => { return adjacentLetters.get(one[0]).includes(s[0]); }));
+        }
+        else if (mode == 4)
+        {
+            let names = Pair.pick(3);
+            let nums = [Math.r];
         }
         else
             return new Pair(one, randomSelection(one));
@@ -63,14 +68,31 @@ function randomSelection (exception = "", predicate = null)
     return choice;
 }
 
+function randomDewey (base = "")
+{
+    let num;
+    if (base == "")
+        num = Math.ceil(Math.random() * 999) + ((Math.random() < .5 ? 0 : Math.ceil(Math.random() * 100) % 100) / 100);
+    else
+    {
+        base = parseFloat(base);
+        num = base;
+    }
+    return num;
+}
+
 function handleKeyPress (event) 
 {
-    if (event.key == "W")
+    if (event.key == "U")
         handleStartPress(0);
     if (event.key == "L")
         handleStartPress(1);
     if (event.key == "S")
         handleStartPress(2);
+    if (event.key == "D")
+        handleStartPress(3);
+    //if (event.key == "N")
+    //    handleStartPress(4);
     if (event.key == " " || event.key == "Enter")
         handleStartPress(lastMode);
     if (begun)
@@ -105,12 +127,12 @@ function updateHistory (pair)
 
 function scrambleCurrentPair ()
 {
-    currentPair = Pair.pick();
+    currentPair = Pair.pick(lastMode);
     l1.textContent = currentPair.l1;
     l2.textContent = currentPair.l2;
 }
 
-function loadAdj (window = 2)
+function loadAdj (window = 3)
 {
     adjacentLetters = new Map();
     for (i = 0; i < 25; i++)
@@ -155,8 +177,8 @@ function handleStartPress (mode = 0)
     playInstructions.style.display = "flex";
     l1.style.display = "flex";
     l2.style.display = "flex";
-    left.style.display = "flex";
-    right.style.display = "flex";
+    //left.style.display = "flex";
+    //right.style.display = "flex";
     scrambleCurrentPair();
     begun = true;
     currentInterval = setInterval(tick, 1000);
@@ -172,8 +194,8 @@ function tick ()
         l1.style.display = "none";
         l2.style.display = "none";
         playInstructions.style.display = "none";
-        left.style.display = "none";
-        right.style.display = "none";
+        //left.style.display = "none";
+        //right.style.display = "none";
         return;
     }
     runningTime --;
@@ -189,8 +211,8 @@ async function main()
     loadAdj();
     document.addEventListener("keypress", handleKeyPress);
     start.addEventListener("click", () => {handleStartPress(lastMode)});
-    left.addEventListener("click", () => {choose(0)});
-    right.addEventListener("click", () => {choose(1)});
+    //left.addEventListener("click", () => {choose(0)});
+    //right.addEventListener("click", () => {choose(1)});
     l1.addEventListener("click", () => {choose(0)});
     l2.addEventListener("click", () => {choose(1)});
     
