@@ -75,9 +75,11 @@ function handleKeyPress (event)
         handleStartPress(lastMode);
     if (begun)
     {
+        console.log(event.key);
         for (i = 0; i < 2; i++)
             if (selectionKeys[i].includes(event.key)) 
             {
+                console.log("accepted");
                 choose(i, currentPair);
         }
     }
@@ -191,6 +193,8 @@ async function main()
     start.addEventListener("click", () => {handleStartPress(lastMode)});
     left.addEventListener("click", () => {choose(0)});
     right.addEventListener("click", () => {choose(1)});
+    l1.addEventListener("click", () => {choose(0)});
+    l2.addEventListener("click", () => {choose(1)});
     
     let allowedKeys = ["Backspace", "Delete", "Tab", "Escape", "Enter", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"];
     timeIn.addEventListener("keypress", function (e) {
