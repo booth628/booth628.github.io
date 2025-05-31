@@ -75,11 +75,9 @@ function handleKeyPress (event)
         handleStartPress(lastMode);
     if (begun)
     {
-        console.log(event.key);
         for (i = 0; i < 2; i++)
-            if (selectionKeys[i].includes(event.key)) 
+            if (selectionKeys[i].includes(event.key) || selectionKeys[i].includes(event.code)) 
             {
-                console.log("accepted");
                 choose(i, currentPair);
         }
     }
