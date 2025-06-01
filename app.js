@@ -16,6 +16,7 @@ const selectionKeys = [["ArrowLeft", "1"], ["ArrowRight", "2"]];
 const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 let names = [];
 let adjacentLetters;
+let lockoutMap;
 
 let pool = [];
 let begun = false;
@@ -48,7 +49,13 @@ class Pair
         else if (mode == 4)
         {
             let names = Pair.pick(3);
-            let nums = [Math.r];
+            let num1 = randomDewey();
+            let num2 = randomDewey(num1);
+            return new Pair(num1 + " " + names.l1, num2 + " " + names.l2);
+        }
+        else if (mode == 5)
+        {
+            return Math.random() < 0.5 ? Pair.pick(3) : Pair.pick(4);
         }
         else
             return new Pair(one, randomSelection(one));
@@ -72,28 +79,51 @@ function randomDewey (base = "")
 {
     let num;
     if (base == "")
-        num = Math.ceil(Math.random() * 999) + ((Math.random() < .5 ? 0 : Math.ceil(Math.random() * 100) % 100) / 100);
+        num = Math.ceil(Math.random() * 999) + ((Math.random() < .3 ? 0 : Math.ceil(Math.random() * 1000)) / 1000);
     else
     {
         base = parseFloat(base);
-        num = base;
+        let code = Math.random();
+        if (code < 0.1)
+            num = base + Math.ceil((0.5 - Math.random()) * 100) / 100;
+        else if (code < 0.3)
+        	num = base + Math.ceil(30 * (0.5 - Math.random()));
+        else if (code < 0.55)
+            num = base;
+        else
+        	num = base + Math.ceil(300 * (0.5 - Math.random())) / 10;
     }
-    return num;
+    if (num >= 1000)
+            num = 628.318; //tau :)
+    let out = num.toString();
+    if (num < 100)
+    	out = "0" + out;
+    if (num < 10)
+    	out = "0" + out;
+    return out.slice(0, 7);
 }
 
 function handleKeyPress (event) 
 {
-    if (event.key == "U")
+    let spaced = event.code == "Space";
+    if (spaced)
+        e.preventDefault();
+    if (lockoutMap.get(event.code))
+        return;
+    lockoutMap.set(event.code, true);
+    if (event.key.toUpperCase() == "U")
         handleStartPress(0);
-    if (event.key == "L")
+    if (event.key.toUpperCase() == "L")
         handleStartPress(1);
-    if (event.key == "S")
+    if (event.key.toUpperCase() == "S")
         handleStartPress(2);
-    if (event.key == "D")
+    if (event.key.toUpperCase() == "D")
         handleStartPress(3);
-    //if (event.key == "N")
-    //    handleStartPress(4);
-    if (event.key == " " || event.key == "Enter")
+    if (event.key.toUpperCase() == "N")
+        handleStartPress(4);
+    if (event.key.toUpperCase() == "M")
+        handleStartPress(5);
+    if (spaced || event.code == "Enter")
         handleStartPress(lastMode);
     if (begun)
     {
@@ -209,20 +239,17 @@ async function main()
     await fetch("./last-names.txt").then(response => response.text()).then(str => temp = str);;
     names = temp.split("\n");
     loadAdj();
-    document.addEventListener("keypress", handleKeyPress);
+    lockoutMap = new Map();
+    document.addEventListener("keydown", handleKeyPress);
+    document.addEventListener("keyup", (event) => { lockoutMap.delete(event.code) });
     start.addEventListener("click", () => {handleStartPress(lastMode)});
-    //left.addEventListener("click", () => {choose(0)});
-    //right.addEventListener("click", () => {choose(1)});
     l1.addEventListener("click", () => {choose(0)});
     l2.addEventListener("click", () => {choose(1)});
     
     let allowedKeys = ["Backspace", "Delete", "Tab", "Escape", "Enter", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"];
     timeIn.addEventListener("keypress", function (e) {
         if (!allowedKeys.includes(e.key) && !/^[0-9]$/.test(e.key))
-        {
-            // Block if the key is not a number or whitelisted
             e.preventDefault();
-        }
     });
 }
 

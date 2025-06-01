@@ -10,7 +10,11 @@ L - Letters; A valid pair will contain 2 letters
 
 U - Unrestricted; A valid pair will contain 2 unique names
 
-N - Nonfiction; A valid pair will contain 2 3-digit numbers which may be followed by decimal digits, and must be followed by names whose first letters are within 3 places of each other
+N - Nonfiction; A valid pair will contain 2 3-digit numbers which may be followed by decimal digits preceding a valid pair under the Default rules
+
+M - Mixed; A valid pair will either be valid under the Default or Nonfiction rules
+
+/**/-/**/--/**/--/**/--/**/--/**/--/**/--/**/-/**/
 
 Pressing Enter, Space, or the Start/Restart button will begin a round of the most recently selected type.
 
